@@ -1,6 +1,6 @@
 # Escreva uma classe em Python para converter um número inteiro em um numeral romano.
 
-class Romanos:
+class Numero:
     # Conversores
     unidades = {
         '0': '',
@@ -46,43 +46,56 @@ class Romanos:
     }
 
     # Lista com os conversores para rodar no for
-    conversor = ['', unidades, dezenas, centenas, milhares]
+    conversor = [unidades, dezenas, centenas, milhares]
 
     def __init__(self, numero):
         self.numero = numero
         self.numeroConvertido = ''
-        self.isValid = True
+        self.isInt = False
+        self.maiorZero = False
+        self.menor4000 = False
         self.error = ''
 
+    def flags(self):
+        # Verifica se o número é inteiro
         try:
-            # Verifica se o número é inteiro, se não for entra no except
-            numeroInt = int(numero)
-
-            # Verifica se o número é menor que 4000
-            if numeroInt >= 4000:
-                self.isValid = False
-                self.error = 'O número é maior ou igual a 4000 e a aplicação não suporta essa ação.'
-
-            # Verifica se o número é maior que 0
-            if numeroInt < 0:
-                self.isValid = False
-                self.error = 'O número é menor que zero.'
+            numeroInt = int(self.numero)
+            self.isInt = True
         except:
-            self.isValid = False
             self.error = 'O número não é um inteiro.'
 
-        # Se válido converte o número
-        if self.isValid:
-            tamanho = len(numero)
-            for i in range(tamanho):
-                self.numeroConvertido = self.numeroConvertido + self.conversor[tamanho - i][numero[i]]
+        # Verifica se o número é maior que 0
+        try:
+            if numeroInt > 0:
+                self.maiorZero = True
+            else:
+                self.error = 'O número é menor que zero.'
+        except:
+            pass
 
+        # Verifica se o número é menor que 4000
+        try:
+            if numeroInt <= 4000:
+                self.menor4000 = True
+            else:
+                self.error = 'O número é maior ou igual a 4000 e a aplicação não suporta essa ação.'
+        except:
+            pass
+
+    def converterRomanos(self):
+        self.flags()
+        # Se válido converte o número
+        if self.isInt and self.maiorZero and self.menor4000:
+            tamanho = len(self.numero)
+            for i in range(tamanho):
+                self.numeroConvertido = self.conversor[i][self.numero[(tamanho - 1) - i]] + self.numeroConvertido
 
 # Entrada de dados
-entrada = Romanos(input("Digite o número que você deseja converter em romanos: "))
+entrada = Numero(input("Digite o número que você deseja converter em romanos: "))
+entrada.converterRomanos()
 
 # Se a entrada é válida imprime o resultado
-if entrada.isValid:
+if entrada.isInt and entrada.maiorZero and entrada.menor4000:
     print(f"O número '{entrada.numero}' em romanos se escreve '{entrada.numeroConvertido}'.")
 # Caso contrário, imprime o erro.
 else:
